@@ -1,5 +1,6 @@
 package com.cd.bigdata.hadoop;
 
+//import lombok.extern.log4j.Log4j2;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.*;
 import org.junit.After;
@@ -11,27 +12,34 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 /**
- * Created by DONG on 2018/5/13.
+ * Created by cd on 2018/5/13.
  */
+//@Log4j2
 public class HdfsClientEasy {
+    private static String dfs = "hdfs://hdsm1:9000/";
 
     FileSystem fs = null;
 
     @Before
     public void initFs() throws URISyntaxException, IOException, InterruptedException {
-        // get a configuration object
+//        log.info("-------- before ------------");
+//         get a configuration object
         Configuration conf = new Configuration();
         // to set a paramter, figure out the filesystem is hdfs
-        conf.set("fs.defaultFS", "hdfs://hdsm-00:9000/");
+        conf.set("fs.defaultFS", dfs);
         conf.set("dfs.replication", "1");
 
         // get a instance of HDFS filesystem
 //         fs = FileSystem.get(conf);
 
         // 指定人员
-        fs = FileSystem.get(new URI("hdfs://hdsm-00:9000/"), conf, "root");
+        fs = FileSystem.get(new URI(dfs), conf, "root");
     }
 
+    @After
+    public void afterTest() {
+//        log.debug("------------- after test ----------");
+    }
 
     @Test
     public void testUpload() throws IOException {
@@ -63,7 +71,7 @@ public class HdfsClientEasy {
             System.out.println(file.getPath().getName());
         }
 
-        System.out.println("-------------------");
+        System.out.println("--------------  -----");
         FileStatus[] status = fs.listStatus(new Path("/"));
         for (FileStatus file : status) {
             System.out.println((file.isDirectory() ? "d" : "f" + "  " + file.getPath().getName()));
