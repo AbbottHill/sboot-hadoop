@@ -21,7 +21,7 @@
     <property>
         <name>mapreduce.framework.name</name>
         <value>yarn</value>
-        <!--<value>local</value>--> <!-- set local submitter-->
+        <!--<value>local</value>-->
     </property><!--
     <property>
         <name>mapreduce.app-submission.cross-platform</name>

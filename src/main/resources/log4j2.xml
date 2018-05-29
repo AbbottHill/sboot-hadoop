@@ -1,20 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="warn">
+<Configuration status="WARN">
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
-            <PatternLayout pattern="[%-5p] %d %c - %m%n" />
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </Console>
-        <File name="File" fileName="logs/sboot-hd.log">
-            <PatternLayout pattern="%m%n" />
-        </File>
     </Appenders>
-    <!-- show activiti sql-->
-    <!--<logger name="org.activiti.engine.impl.persistence.entity" level="DEBUG" />-->
 
     <Loggers>
-        <Root level="DEBUG"><!--INFO-->
-            <AppenderRef ref="Console" />
-            <AppenderRef ref="File" />
+        <Logger name="com.cd.sboothd" level="debug">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Root level="debug"><!--error-->
+            <AppenderRef ref="Console"/>
         </Root>
     </Loggers>
 </Configuration>

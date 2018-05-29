@@ -43,36 +43,35 @@ public class HdfsClientEasy {
 
     @Test
     public void testUpload() throws IOException {
-        fs.copyFromLocalFile(new Path("C:\\Users\\Administrator\\Desktop\\hadoop-2.6.4-src.gz"), new Path("/hadoop-2.6.4-src.copy.gz"));
-
+        fs.copyFromLocalFile(new Path("C:\\hd\\data\\phone-info.txt"), new Path("/wordcount/data/dataphone-info.txt"));
     }
 
     @Test
     public void testRMfile() throws IOException {
-        fs.delete(new Path(""), true);// recursive
+        fs.delete(new Path("/wordcount/dataphone-info.txt"), true);// recursive
     }
 
     @Test
     public void testRename() throws IOException {
-        boolean rename = fs.rename(new Path("/jdk.tgz"), new Path("/jdk.tgz.rename"));
+        boolean rename = fs.rename(new Path("/wordcount/hello.txt"), new Path("/wordcount/hello.rename.txt"));
     }
 
     @Test
     public void testDown() throws IOException {
-        fs.copyToLocalFile(false, new Path("/hadoop-2.6.4-src.copy.gz"), new Path("C:\\Users\\Public\\Desktop\\hadoop-2.6.4-src.down.gz"), true);
+        fs.copyToLocalFile(false, new Path("/wordcount/qingshu.txt"), new Path("C:\\Users\\Public\\Desktop\\qingshu.down.txt"), true);
     }
 
 
     @Test
     public void TestListFiles() throws IOException {
-        RemoteIterator<LocatedFileStatus> listFiles = fs.listFiles(new Path("/"), true);
+        RemoteIterator<LocatedFileStatus> listFiles = fs.listFiles(new Path("/wordcount"), true);
         while (listFiles.hasNext()) {
             LocatedFileStatus file = listFiles.next();
             System.out.println(file.getPath().getName());
         }
 
         System.out.println("--------------  -----");
-        FileStatus[] status = fs.listStatus(new Path("/"));
+        FileStatus[] status = fs.listStatus(new Path("/wordcount/data"));
         for (FileStatus file : status) {
             System.out.println((file.isDirectory() ? "d" : "f" + "  " + file.getPath().getName()));
         }

@@ -1,4 +1,4 @@
-package com.cd.sboothd.mapred;
+package com.cd.sboothd.mapred.wordcount;
 
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;

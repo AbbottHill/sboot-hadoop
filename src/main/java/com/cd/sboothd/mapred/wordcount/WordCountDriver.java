@@ -1,4 +1,4 @@
-package com.cd.sboothd.mapred;
+package com.cd.sboothd.mapred.wordcount;
 
 import lombok.extern.log4j.Log4j2;
 import org.apache.hadoop.conf.Configuration;
@@ -16,12 +16,12 @@ public class WordCountDriver {
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
         //1:指定为hdfs文件系统
-        conf.set("fs.defaultFS", "hdfs://hdsm1:9000");
+//        conf.set("fs.defaultFS", "hdfs://hdsm1:9000");
 
         //2:指定jar包位置, 仅linux有效
 //        conf.set("mapreduce.job.jar", "D:\\IdeaWorkSpace\\web-trunk\\projects\\mrjob\\mrjob.jar");
-        conf.set("mapreduce.app-submission.cross-platform", "true");
-//        conf.set("mapred.jar", "D:\\IdeaWorkSpace\\web-trunk\\projects\\sboot-hd\\sboot-hd.jar");
+
+//        conf.set("mapreduce.app-submission.cross-platform", "true");
 
         // 构造一个job对象来封装本mapreduce业务到所有信息
         Job wcjob = Job.getInstance(conf, "my Word Count");
@@ -33,6 +33,9 @@ public class WordCountDriver {
         // 指定本job用到的reducer类
         wcjob.setReducerClass(WordCountReducer.class);
 
+        // 指定本job用到的Combiner类
+        wcjob.setCombinerClass(WordCountReducer.class);
+
         // 指定mapper输出的kv类型
         wcjob.setMapOutputKeyClass(Text.class);
         wcjob.setMapOutputValueClass(LongWritable.class);
@@ -43,10 +46,11 @@ public class WordCountDriver {
         wcjob.setOutputValueClass(LongWritable.class);
 
         // 指定程序处理到输入数据所在的路径
-        FileInputFormat.setInputPaths(wcjob, new Path("/wordcount/data"));
+//        FileInputFormat.setInputPaths(wcjob, new Path("/wordcount/data"));
+        FileInputFormat.setInputPaths(wcjob, new Path("C:\\hd\\data"));
 
         FileSystem fileSystem = FileSystem.get(conf);
-        Path path = new Path("/wordcount/output");
+        Path path = new Path("C:\\hd\\result");
         if (fileSystem.exists(path)) {
             fileSystem.delete(path, true);
         }
