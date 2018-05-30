@@ -48,7 +48,7 @@ public class HdfsClientEasy {
 
     @Test
     public void testRMfile() throws IOException {
-        fs.delete(new Path("/wordcount/dataphone-info.txt"), true);// recursive
+        fs.delete(new Path("/wordcount/data/dataphone-info.txt"), true);// recursive
     }
 
     @Test

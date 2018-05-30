@@ -1,17 +1,15 @@
 package com.cd.sboothd.mapred.flowcount;
 
-import lombok.ToString;
-import org.apache.hadoop.io.Writable;
+import org.apache.hadoop.io.WritableComparable;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-public class FlowBean implements Writable {
+public class FlowBean implements WritableComparable<FlowBean> {
     private String phoneNbr;
     private Long upFlow;
 
-    @Override
     public void write(DataOutput out) throws IOException {
         out.writeUTF(phoneNbr);
         out.writeLong(upFlow);
@@ -20,7 +18,6 @@ public class FlowBean implements Writable {
     /**
      * 读写的顺序要保持一致
      */
-    @Override
     public void readFields(DataInput in) throws IOException {
         phoneNbr = in.readUTF();
         upFlow = in.readLong();
@@ -51,4 +48,9 @@ public class FlowBean implements Writable {
     public void setUpFlow(Long upFlow) {
         this.upFlow = upFlow;
     }
+
+    public int compareTo(FlowBean o) {
+        return (upFlow > o.getUpFlow()? -1: 1);
+    }
+
 }
