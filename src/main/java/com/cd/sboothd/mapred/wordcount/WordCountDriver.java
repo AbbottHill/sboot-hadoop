@@ -10,18 +10,20 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
+import java.net.URI;
+
 @Log4j2
 public class WordCountDriver {
+    private static String dfs = "hdfs://ns1";
 
     public static void main(String[] args) throws Exception {
         Configuration conf = new Configuration();
         //1:指定为hdfs文件系统
-//        conf.set("fs.defaultFS", "hdfs://hdsm1:9000");
+        conf.set("fs.defaultFS", "hdfs://ns1");
 
         //2:指定jar包位置, 仅linux有效
-//        conf.set("mapreduce.job.jar", "D:\\IdeaWorkSpace\\web-trunk\\projects\\mrjob\\mrjob.jar");
-
-//        conf.set("mapreduce.app-submission.cross-platform", "true");
+        conf.set("mapreduce.job.jar", "D:\\IdeaWorkSpace\\web-trunk\\projects\\mrjob\\mrjob.jar");
+        conf.set("mapreduce.app-submission.cross-platform", "true");
 
         // 构造一个job对象来封装本mapreduce业务到所有信息
         Job wcjob = Job.getInstance(conf, "my Word Count");
@@ -49,7 +51,7 @@ public class WordCountDriver {
 //        FileInputFormat.setInputPaths(wcjob, new Path("/wordcount/data"));
         FileInputFormat.setInputPaths(wcjob, new Path("C:\\hd\\data"));
 
-        FileSystem fileSystem = FileSystem.get(conf);
+        FileSystem fileSystem = FileSystem.get(new URI(dfs), conf, "hd");;
         Path path = new Path("C:\\hd\\result");
         if (fileSystem.exists(path)) {
             fileSystem.delete(path, true);

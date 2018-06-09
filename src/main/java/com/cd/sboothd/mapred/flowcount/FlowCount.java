@@ -45,7 +45,7 @@ public class FlowCount {
     public static void main(String[] args) throws Exception {
 
         Configuration conf = new Configuration();
-        conf.set("fs.defaultFS", "hdfs://hdsm1:9000");
+        conf.set("fs.defaultFS", "hdfs://ns1");
         conf.set("mapreduce.app-submission.cross-platform", "true");
 
         Job job = Job.getInstance(conf, "flow count");

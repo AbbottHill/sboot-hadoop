@@ -16,7 +16,8 @@ import java.net.URISyntaxException;
  */
 //@Log4j2
 public class HdfsClientEasy {
-    private static String dfs = "hdfs://hdsm1:9000/";
+//    private static String dfs = "hdfs://hdsm1:9000/";
+    private static String dfs = "hdfs://ns1";
 
     FileSystem fs = null;
 
@@ -27,13 +28,13 @@ public class HdfsClientEasy {
         Configuration conf = new Configuration();
         // to set a paramter, figure out the filesystem is hdfs
         conf.set("fs.defaultFS", dfs);
-        conf.set("dfs.replication", "1");
+//        conf.set("dfs.replication", "1");
 
         // get a instance of HDFS filesystem
 //         fs = FileSystem.get(conf);
 
         // 指定人员
-        fs = FileSystem.get(new URI(dfs), conf, "root");
+        fs = FileSystem.get(new URI(dfs), conf, "hd");
     }
 
     @After
@@ -64,14 +65,14 @@ public class HdfsClientEasy {
 
     @Test
     public void TestListFiles() throws IOException {
-        RemoteIterator<LocatedFileStatus> listFiles = fs.listFiles(new Path("/wordcount"), true);
+        RemoteIterator<LocatedFileStatus> listFiles = fs.listFiles(new Path("/"), true);
         while (listFiles.hasNext()) {
             LocatedFileStatus file = listFiles.next();
             System.out.println(file.getPath().getName());
         }
 
         System.out.println("--------------  -----");
-        FileStatus[] status = fs.listStatus(new Path("/wordcount/data"));
+        FileStatus[] status = fs.listStatus(new Path("/"));
         for (FileStatus file : status) {
             System.out.println((file.isDirectory() ? "d" : "f" + "  " + file.getPath().getName()));
         }
