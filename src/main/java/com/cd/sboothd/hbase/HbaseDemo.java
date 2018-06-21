@@ -1,6 +1,7 @@
 package com.cd.sboothd.hbase;
 
 
+import com.alibaba.fastjson.JSON;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.*;
 import org.apache.hadoop.hbase.client.*;
@@ -24,7 +25,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class HbaseDemo {
 
@@ -51,8 +55,9 @@ public class HbaseDemo {
 
 	@Test
 	public void testPut() throws Exception{
-		Put p = new Put(Bytes.toBytes("person_rk_bj_zhang_000002"));
-		p.add("base_info".getBytes(), "name".getBytes(), "zhangwuji".getBytes());
+		Put p = new Put(Bytes.toBytes("rk0003"));
+//		p.add("base_info".getBytes(), "name".getBytes(), "zhangwuji".getBytes());
+		p.addColumn("base_info".getBytes(), "name".getBytes(), "朱茵".getBytes());
 		table.put(p);
 		table.close();
 	}
@@ -63,23 +68,31 @@ public class HbaseDemo {
 		Get get = new Get(Bytes.toBytes("rk0001"));
 		get.setMaxVersions(5);
 		Result result = table.get(get);
-
 		List<Cell> cells = result.listCells();
 
-		// deprecated
-//			result.getValue(family, qualifier);  可以从result中直接取出一个特定的value
-		//遍历出result中所有的键值对
-//		for(KeyValue kv : result.list()){
-//			String family = new String(kv.getFamily());
-//			System.out.println(family);
-//			String qualifier = new String(kv.getQualifier());
-//			System.out.println(qualifier);
-//			System.out.println(new String(kv.getValue()));
-//		}
 
 		for (int i = 0; i < cells.size(); i++) {
 			Cell cell = cells.get(i);
-			System.out.println(new String(CellUtil.cloneFamily(cell)) + " => " + new String(CellUtil.cloneValue(cell)));
+			System.out.println(new String(CellUtil.cloneFamily(cell)) + " => " + new String(CellUtil.cloneQualifier(cell)) + ": " + new String(CellUtil.cloneValue(cell)));
+		}
+
+		// table.get(gets);
+		List<Get> gets = new ArrayList<>();
+		for (int i = 0; i < 4; i++) {
+			StringBuilder rk = new StringBuilder("rk000");
+			get = new Get(Bytes.toBytes(rk.append(i).toString()));
+			gets.add(get);
+		}
+		Result[] results = table.get(gets);
+		for (int i = 0; i < results.length; i++) {
+			Result tmpResult = results[i];
+			Map<String, Object> map = new HashMap<>();
+			for (Cell cell : tmpResult.rawCells()) {
+				map.put(Bytes.toString(CellUtil.cloneQualifier(cell)), Bytes.toString(CellUtil.cloneValue(cell)));
+//				System.out.println(Bytes.toString(CellUtil.cloneRow(cell)) + " => " + Bytes.toString(CellUtil.cloneFamily(cell)) + ":" +
+//						Bytes.toString(CellUtil.cloneQualifier(cell)) + ":" + Bytes.toString(CellUtil.cloneValue(cell)));
+			}
+			System.out.println(Bytes.toString(tmpResult.getRow()) + " => " + JSON.toJSONString(map));
 		}
 		table.close();
 	}
@@ -95,7 +108,8 @@ public class HbaseDemo {
 		for(Result r : scanner){
 			//直接从result中取到某个特定的value
 			byte[] value = r.getValue(Bytes.toBytes("base_info"), Bytes.toBytes("name"));
-			System.out.println(new String(value));
+//			System.out.println(new String(value));
+			System.out.println(Bytes.toString(r.getRow()) + " > " + Bytes.toString(value));
 		}
 		table.close();
 	}
@@ -106,13 +120,14 @@ public class HbaseDemo {
 	 */
 	@Test
 	public void testScanFilter() throws Exception{
-		Scan scan = new Scan(Bytes.toBytes("person_rk_bj_zhang_000001"), Bytes.toBytes("person_rk_bj_zhang_000002"));
+		Scan scan = new Scan();
+//		Scan scan = new Scan(Bytes.toBytes("rk0001"), Bytes.toBytes("rk0002"));
 
 		//前缀过滤器----针对行键
 		Filter filter = new PrefixFilter(Bytes.toBytes("rk"));
 
 		//行过滤器
-		ByteArrayComparable rowComparator = new BinaryComparator(Bytes.toBytes("person_rk_bj_zhang_000001"));
+		ByteArrayComparable rowComparator = new BinaryComparator(Bytes.toBytes("rk0001"));
 		RowFilter rf = new RowFilter(CompareOp.LESS_OR_EQUAL, rowComparator);
 
 		/**
@@ -150,9 +165,10 @@ public class HbaseDemo {
 				CompareOp.EQUAL ,
 				new BinaryComparator(Bytes.toBytes("na"))   //表中不存在na列，过滤结果为空
 		);
+		//表中存在以na打头的列name，过滤结果为所有行的该列数据
 		filter = new QualifierFilter(
 				CompareOp.EQUAL ,
-				new BinaryPrefixComparator(Bytes.toBytes("na"))   //表中存在以na打头的列name，过滤结果为所有行的该列数据
+				new BinaryPrefixComparator(Bytes.toBytes("na"))
 		);
 
 		//基于列名(即Qualifier)前缀过滤数据的ColumnPrefixFilter
