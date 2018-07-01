@@ -18,7 +18,8 @@ public class HbaseDao {
 		conf.set("hbase.zookeeper.quorum", "weekend05:2181,weekend06:2181,weekend07:2181");
 
 		//hBaseAdmin对表进行管理的客户端
-		HBaseAdmin hBaseAdmin = new HBaseAdmin(conf);
+//		HBaseAdmin hBaseAdmin = new HBaseAdmin(conf);
+//		HBaseAdmin hBaseAdmin = new HBaseAdmin(conf);
 
 		TableName tableName = TableName.valueOf("mygirls");
 		HTableDescriptor htd = new HTableDescriptor(tableName);
@@ -31,7 +32,7 @@ public class HbaseDao {
 		//在表描述器中添加列族
 		htd.addFamily(base_info);
 
-		hBaseAdmin.createTable(htd);
+//		hBaseAdmin.createTable(htd);
 
 	}
 

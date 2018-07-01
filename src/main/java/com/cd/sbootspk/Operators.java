@@ -172,6 +172,7 @@ class FlatMap_Operator {
         List<String> datas = Arrays.asList("a,1", "b,2", "c,3");
         JavaRDD<String> javaRDD = sc.parallelize(datas);
         JavaRDD<String> flatMap = javaRDD.flatMap(s -> Arrays.asList(s.split(",")).iterator());
+//        JavaRDD<String> flatMap = javaRDD.flatMap(s -> {return Arrays.asList(s.split(",")).iterator();});
         flatMap.foreach(s -> System.out.println(s));
 
     }

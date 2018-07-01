@@ -18,7 +18,7 @@ public class SimpleSparkApp {
                 .getOrCreate();
         Dataset<String> logData = spark.read().textFile(logFile).cache();
 
-        long numAs = logData.filter(s -> s.contains("a")).count();
+        long numAs = logData.filter((FilterFunction<String>) s -> s.contains("a")).count();
         long numBs = logData.filter(new FilterFunction<String>() {
             @Override
             public boolean call(String s) throws Exception {

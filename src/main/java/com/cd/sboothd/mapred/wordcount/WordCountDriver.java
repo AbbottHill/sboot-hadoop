@@ -17,12 +17,14 @@ public class WordCountDriver {
     private static String dfs = "hdfs://ns1";
 
     public static void main(String[] args) throws Exception {
+        System.setProperty("HADOOP_USER_NAME", "hd ");
+
         Configuration conf = new Configuration();
         //1:指定为hdfs文件系统
         conf.set("fs.defaultFS", "hdfs://ns1");
 
         //2:指定jar包位置, 仅linux有效
-        conf.set("mapreduce.job.jar", "D:\\IdeaWorkSpace\\web-trunk\\projects\\mrjob\\mrjob.jar");
+        conf.set("mapreduce.job.jar", "D:\\Idea_Workspace\\sboot-hd\\sboot-hd.jar");
         conf.set("mapreduce.app-submission.cross-platform", "true");
 
         // 构造一个job对象来封装本mapreduce业务到所有信息
@@ -48,11 +50,10 @@ public class WordCountDriver {
         wcjob.setOutputValueClass(LongWritable.class);
 
         // 指定程序处理到输入数据所在的路径
-//        FileInputFormat.setInputPaths(wcjob, new Path("/wordcount/data"));
-        FileInputFormat.setInputPaths(wcjob, new Path("C:\\hd\\data"));
+        FileInputFormat.setInputPaths(wcjob, new Path("/data/wordcount"));
 
         FileSystem fileSystem = FileSystem.get(new URI(dfs), conf, "hd");;
-        Path path = new Path("C:\\hd\\result");
+        Path path = new Path("/result/wordcount1");
         if (fileSystem.exists(path)) {
             fileSystem.delete(path, true);
         }

@@ -59,7 +59,7 @@ public class HdfsClientEasy {
 
     @Test
     public void testDown() throws IOException {
-        fs.copyToLocalFile(false, new Path("/wordcount/qingshu.txt"), new Path("C:\\Users\\Public\\Desktop\\qingshu.down.txt"), true);
+        fs.copyToLocalFile(false, new Path("/data/wordcount/qingshu.txt"), new Path("C:\\Users\\Public\\Desktop\\qingshu.down.txt"), true);
     }
 
 

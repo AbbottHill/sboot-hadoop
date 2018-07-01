@@ -207,7 +207,7 @@ public class HbaseDemo {
 	@Test
 	public void testDel() throws Exception{
 		Delete del = new Delete(Bytes.toBytes("rk0001"));
-		del.deleteColumn(Bytes.toBytes("data"), Bytes.toBytes("pic"));
+//		del.deleteColumn(Bytes.toBytes("data"), Bytes.toBytes("pic"));
 		table.delete(del);
 		table.close();
 	}
@@ -215,18 +215,19 @@ public class HbaseDemo {
 
 
 	public static void main(String[] args) throws Exception {
-		Configuration conf = HBaseConfiguration.create();
-		conf.set("hbase.zookeeper.quorum", "cluster01:2181,cluster02:2181,cluster03:2181");
-		HBaseAdmin admin = new HBaseAdmin(conf);
-
-		TableName tableName = TableName.valueOf("person_info");
-		HTableDescriptor td = new HTableDescriptor(tableName);
-		HColumnDescriptor cd = new HColumnDescriptor("base_info");
-		cd.setMaxVersions(10);
-		td.addFamily(cd);
-		admin.createTable(td);
-
-		admin.close();
+//		Configuration conf = HBaseConfiguration.create();
+//		conf.set("hbase.zookeeper.quorum", "cluster01:2181,cluster02:2181,cluster03:2181");
+////		HBaseAdmin admin = new HBaseAdmin(conf);
+//		HBaseAdmin admin = new HBaseAdmin(conf);
+//
+//		TableName tableName = TableName.valueOf("person_info");
+//		HTableDescriptor td = new HTableDescriptor(tableName);
+//		HColumnDescriptor cd = new HColumnDescriptor("base_info");
+//		cd.setMaxVersions(10);
+//		td.addFamily(cd);
+//		admin.createTable(td);
+//
+//		admin.close();
 
 	}
 
