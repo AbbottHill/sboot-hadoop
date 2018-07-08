@@ -12,7 +12,9 @@ import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.VoidFunction;
 import org.apache.spark.sql.SparkSession;
+import org.htrace.impl.StandardOutSpanReceiver;
 import scala.Tuple2;
+import scala.collection.mutable.ListBuffer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -246,7 +248,7 @@ class MapPartitionsWithIndex_Operator {
     }
 }
 
-class GroupByKey_Operator {
+class GroupByKey_operator {
     public static void main(String[] args) {
         List<Tuple2<Object, Object>> list = Arrays.asList(new Tuple2<Object, Object>('a', 1),
                 new Tuple2<Object, Object>('b', 2),
@@ -402,7 +404,7 @@ class Cogroup_Operators {
     }
 }
 
-class SortByKey {
+class SortByKey_operator {
     public static void main(String[] args) {
         List<Integer> datas = Arrays.asList(60, 70, 80, 55, 45, 75);
 
@@ -434,7 +436,7 @@ class SortByKey {
 /**
  * Cartesian product
  */
-class Cartesian {
+class Cartesian_operator {
     public static void main(String[] args) {
         List<String> names = Arrays.asList("张三", "李四", "王五");
         List<Integer> scores = Arrays.asList(60, 70, 80);
@@ -444,13 +446,45 @@ class Cartesian {
 
         JavaPairRDD<String, Integer> cartesianRDD = namesRDD.cartesian(scoreRDD);
         cartesianRDD.foreach(new VoidFunction<Tuple2<String, Integer>>() {
-
             private static final long serialVersionUID = 1L;
-
             public void call(Tuple2<String, Integer> t) throws Exception {
                 System.out.println(t._1 + "\t" + t._2());
             }
         });
+    }
+}
+
+
+class CombineByKey_operator{
+    public static void main(String[] args) {
+        SparkContext sparkContext = SparkSession.builder().appName("combine by key operator").master("local").getOrCreate().sparkContext();
+        JavaSparkContext jsc = new JavaSparkContext(sparkContext);
+        List<Tuple2<Character, Integer>> list = Arrays.asList(
+                new Tuple2<>('a', 1),
+                new Tuple2<>('b', 1),
+                new Tuple2<>('b', 2),
+                new Tuple2<>('c', 1),
+                new Tuple2<>('d', 1),
+                new Tuple2<>('c', 1),
+                new Tuple2<>('b', 3),
+                new Tuple2<>('d', 1),
+                new Tuple2<>('a', 1)
+        );
+
+        JavaRDD<Tuple2<Character, Integer>> parallelize = jsc.parallelize(list, 2);
+        parallelize.mapPartitionsWithIndex((i, it) -> {
+            ArrayList<Object> arr = new ArrayList<>();
+            while (it.hasNext()) {
+                Tuple2<Character, Integer> next = it.next();
+                arr.add(next);
+                System.out.println(i + ": " + next);
+            }
+            return arr.iterator();
+        }, false);
+
+
+
+        jsc.stop();
     }
 }
 
