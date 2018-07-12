@@ -454,38 +454,70 @@ class Cartesian_operator {
     }
 }
 
-
-class CombineByKey_operator{
+class CombineByKey_operator {
     public static void main(String[] args) {
-        SparkContext sparkContext = SparkSession.builder().appName("combine by key operator").master("local").getOrCreate().sparkContext();
-        JavaSparkContext jsc = new JavaSparkContext(sparkContext);
-        List<Tuple2<Character, Integer>> list = Arrays.asList(
-                new Tuple2<>('a', 1),
-                new Tuple2<>('b', 1),
-                new Tuple2<>('b', 2),
-                new Tuple2<>('c', 1),
-                new Tuple2<>('d', 1),
-                new Tuple2<>('c', 1),
-                new Tuple2<>('b', 3),
-                new Tuple2<>('d', 1),
-                new Tuple2<>('a', 1)
+        List<Tuple2<String, Integer>> tuple2s = Arrays.asList(
+                new Tuple2<>("a", 1),
+                new Tuple2<>("b", 2),
+                new Tuple2<>("c", 3),
+                new Tuple2<>("b", 4),
+                new Tuple2<>("b", 8),
+                new Tuple2<>("a", 5),
+                new Tuple2<>("b", 6),
+                new Tuple2<>("e", 7)
         );
-
-        JavaRDD<Tuple2<Character, Integer>> parallelize = jsc.parallelize(list, 2);
-        parallelize.mapPartitionsWithIndex((i, it) -> {
-            ArrayList<Object> arr = new ArrayList<>();
+        JavaPairRDD<String, Integer> pairRDD = sc.parallelizePairs(tuple2s, 2);
+        pairRDD.mapPartitionsWithIndex((index, it) -> {
+            ArrayList<Tuple2<String, Integer>> tuple2s1 = new ArrayList<>();
             while (it.hasNext()) {
-                Tuple2<Character, Integer> next = it.next();
-                arr.add(next);
-                System.out.println(i + ": " + next);
+                Tuple2<String, Integer> value = it.next();
+                tuple2s1.add(value);
+                System.out.println(index + "-> " + value);
             }
-            return arr.iterator();
-        }, false);
+            return tuple2s1.iterator();
+        }, false).count();
 
+        pairRDD.combineByKey(new Function<Integer, String>() {
+            @Override
+            public String call(Integer integer) throws Exception {
+                return integer + ": ";
+            }
+        }, new Function2<String, Integer, String>() {
+            @Override
+            public String call(String s, Integer integer) throws Exception {
+                return s + "-> " + integer;
+            }
+        }, new Function2<String, String, String>() {
+            @Override
+            public String call(String s, String s2) throws Exception {
+                return s + "@ " + s2;
+            }
+        }).foreach(t -> System.out.println(t));
 
-
-        jsc.stop();
+        // Group by key
+        pairRDD.combineByKey(new Function<Integer, List<Integer>>() {
+            @Override
+            public List<Integer> call(Integer v1) throws Exception {
+                ArrayList<Integer> integers = new ArrayList<>();
+                integers.add(v1);
+                return integers;
+            }
+        }, new Function2<List<Integer>, Integer, List<Integer>>() {
+            @Override
+            public List<Integer> call(List<Integer> v1, Integer v2) throws Exception {
+                v1.add(v2);
+                return v1;
+            }
+        }, new Function2<List<Integer>, List<Integer>, List<Integer>>() {
+            @Override
+            public List<Integer> call(List<Integer> v1, List<Integer> v2) throws Exception {
+                v1.addAll(v2);
+                return v1;
+            }
+        }).foreach(t -> System.out.println(t));
     }
 }
 
-    
+
+
+
