@@ -1,9 +1,7 @@
-package com.cd.sbootspk;
+package com.cd.sbootspk.operators;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.spark.SparkConf;
-import org.apache.spark.SparkContext;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -12,16 +10,14 @@ import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.VoidFunction;
 import org.apache.spark.sql.SparkSession;
-import org.htrace.impl.StandardOutSpanReceiver;
 import scala.Tuple2;
-import scala.collection.mutable.ListBuffer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.cd.sbootspk.Operators.sc;
+import static com.cd.sbootspk.operators.Operators.sc;
 
 /**
  * genericity is important

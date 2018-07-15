@@ -1,4 +1,4 @@
-package com.cd.sbootspk;
+package com.cd.sbootspk.operators;
 
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
