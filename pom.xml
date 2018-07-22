@@ -65,7 +65,6 @@
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-streaming_2.11</artifactId>
 			<version>2.2.0</version>
-			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
@@ -78,6 +77,12 @@
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>${mysql.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.googlecode.aviator</groupId>
+			<artifactId>aviator</artifactId>
+			<version>3.2.0</version>
 		</dependency>
 	</dependencies>
 
