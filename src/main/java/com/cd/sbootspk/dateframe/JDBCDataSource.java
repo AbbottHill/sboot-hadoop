@@ -1,38 +1,51 @@
 package com.cd.sbootspk.dateframe;
 
-import org.apache.spark.SparkContext;
-import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SQLContext;
 import org.apache.spark.sql.SparkSession;
 
-import java.util.HashMap;
+import java.util.Properties;
 
 public class JDBCDataSource {
     public static void main(String[] args) {
-        SparkContext sparkContext = SparkSession.builder().appName("jdbc data source").master("local").getOrCreate().sparkContext();
-        JavaSparkContext jsc = new JavaSparkContext(sparkContext);
-        SQLContext sqlContext = new SQLContext(jsc);
 
-        // way 1
-        HashMap<String, String> options = new HashMap<>();
-        options.put("url", "jdbc:mysql://127.0.0.1:3306/database_mine?characterEncoding=utf8&useSSL=true");
-        options.put("driver", "com.mysql.jdbc.Driver");
-        options.put("user", "root");
-        options.put("password", "mysqlpass");
-        options.put("dbtable", "sys_user");
-        Dataset<Row> dataFrame = sqlContext.read().format("jdbc").options(options).load();
-        dataFrame.show();
+        // Note: JDBC loading and saving can be achieved via either the load/save or jdbc methods
+        // Loading data from a JDBC source
+        SQLContext spark = SparkSession.builder().master("local").getOrCreate().sqlContext();
+        Dataset<Row> jdbcDF = spark.read()
+                .format("jdbc")
+                .option("url", "jdbc:mysql://127.0.0.1:3306/database_mine?characterEncoding=utf8&useSSL=true")
+                .option("dbtable", "sys_user")
+                .option("user", "root")
+                .option("password", "mysqlpass")
+                .load();
+        jdbcDF.show();
 
-        options.put("", "");
-        options.put("dbtable", "sys_user");
+        Properties connectionProperties = new Properties();
+        connectionProperties.put("user", "root");
+        connectionProperties.put("password", "mysqlpass");
+        Dataset<Row> jdbcDF2 = spark.read()
+                .jdbc("jdbc:mysql://127.0.0.1:3306/database_mine?characterEncoding=utf8&useSSL=true", "sys_user", connectionProperties);
+        jdbcDF2.show();
 
-        // way 2
-
-
+//        // todo
+//        // Saving data to a JDBC source
+//        jdbcDF.write()
+//                .format("jdbc")
+//                .option("url", "jdbc:postgresql:dbserver")
+//                .option("dbtable", "schema.tablename")
+//                .option("user", "username")
+//                .option("password", "password")
+//                .save();
+//
+//        jdbcDF.write()
+//                .jdbc("jdbc:postgresql:dbserver", "schema.tablename", connectionProperties);
+//
+//        // Specifying create table column data types on write
+//        jdbcDF.write()
+//                .option("createTableColumnTypes", "name CHAR(64), comments VARCHAR(1024)")
+//                .jdbc("jdbc:postgresql:dbserver", "schema.tablename", connectionProperties);
     }
-
-
 
 }

@@ -491,25 +491,16 @@ class CombineByKey_operator {
         }).foreach(t -> System.out.println(t));
 
         // Group by key
-        pairRDD.combineByKey(new Function<Integer, List<Integer>>() {
-            @Override
-            public List<Integer> call(Integer v1) throws Exception {
-                ArrayList<Integer> integers = new ArrayList<>();
-                integers.add(v1);
-                return integers;
-            }
-        }, new Function2<List<Integer>, Integer, List<Integer>>() {
-            @Override
-            public List<Integer> call(List<Integer> v1, Integer v2) throws Exception {
-                v1.add(v2);
-                return v1;
-            }
-        }, new Function2<List<Integer>, List<Integer>, List<Integer>>() {
-            @Override
-            public List<Integer> call(List<Integer> v1, List<Integer> v2) throws Exception {
-                v1.addAll(v2);
-                return v1;
-            }
+        pairRDD.combineByKey((Function<Integer, List<Integer>>) v1 -> {
+            ArrayList<Integer> integers = new ArrayList<>();
+            integers.add(v1);
+            return integers;
+        }, (Function2<List<Integer>, Integer, List<Integer>>) (v1, v2) -> {
+            v1.add(v2);
+            return v1;
+        }, (Function2<List<Integer>, List<Integer>, List<Integer>>) (v1, v2) -> {
+            v1.addAll(v2);
+            return v1;
         }).foreach(t -> System.out.println(t));
     }
 }

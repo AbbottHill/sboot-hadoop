@@ -8,6 +8,7 @@ import java.io.IOException;
 
 /**
  * RPC service
+ * set instance
  */
 public class MyService {
 

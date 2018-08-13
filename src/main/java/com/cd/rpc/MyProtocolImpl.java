@@ -1,8 +1,11 @@
 package com.cd.rpc;
 
-//import lombok.extern.log4j.Log4j2;
+import lombok.extern.log4j.Log4j2;
 
-//@Log4j2
+/**
+ * 存在于service 端
+ */
+@Log4j2
 public class MyProtocolImpl implements MyProtocol{
 
     @Override
