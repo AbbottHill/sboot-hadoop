@@ -4,10 +4,10 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.cd</groupId>
-	<artifactId>sboot-hd</artifactId>
+	<artifactId>sboot-hadoop</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
-	<name>sboot-hd</name>
+	<name>sboot-hadoop</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
